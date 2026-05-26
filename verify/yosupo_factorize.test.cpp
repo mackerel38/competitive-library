@@ -1,24 +1,24 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/factorize"
+#include <bits/stdc++.h>
+using namespace std;
+
 #include "math/prime.hpp"
 
-#include <iostream>
-#include <vector>
-
 int main() {
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int q;
-    std::cin >> q;
+    cin >> q;
     while (q--) {
         long long n;
-        std::cin >> n;
-        std::vector<long long> primes;
+        cin >> n;
+        vector<long long> primes;
         for (auto [p, e] : poe::factorize(n)) {
             while (e--) primes.push_back(p);
         }
-        std::cout << primes.size();
-        for (long long p : primes) std::cout << ' ' << p;
-        std::cout << '\n';
+        cout << primes.size();
+        for (long long p : primes) cout << ' ' << p;
+        cout << '\n';
     }
 }

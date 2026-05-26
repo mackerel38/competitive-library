@@ -1,17 +1,18 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/primality_test"
+#include <bits/stdc++.h>
+using namespace std;
+
 #include "math/prime.hpp"
 
-#include <iostream>
-
 int main() {
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int q;
-    std::cin >> q;
+    cin >> q;
     while (q--) {
         long long n;
-        std::cin >> n;
-        std::cout << (poe::is_prime(n) ? "Yes" : "No") << '\n';
+        cin >> n;
+        cout << (poe::is_prime(n) ? "Yes" : "No") << '\n';
     }
 }

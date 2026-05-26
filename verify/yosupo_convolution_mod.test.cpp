@@ -1,23 +1,23 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/convolution_mod"
+#include <bits/stdc++.h>
+using namespace std;
+
 #include "math/convolution.hpp"
 
-#include <iostream>
-#include <vector>
-
 int main() {
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int n, m;
-    std::cin >> n >> m;
-    std::vector<poe::modint998244353> a(n), b(m);
-    for (auto& x : a) std::cin >> x;
-    for (auto& x : b) std::cin >> x;
+    cin >> n >> m;
+    vector<poe::modint998244353> a(n), b(m);
+    for (auto& x : a) cin >> x;
+    for (auto& x : b) cin >> x;
 
     auto c = poe::convolution(a, b);
     for (int i = 0; i < static_cast<int>(c.size()); ++i) {
-        if (i) std::cout << ' ';
-        std::cout << c[i];
+        if (i) cout << ' ';
+        cout << c[i];
     }
-    std::cout << '\n';
+    cout << '\n';
 }

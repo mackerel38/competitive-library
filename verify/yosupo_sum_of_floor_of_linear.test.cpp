@@ -1,17 +1,18 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/sum_of_floor_of_linear"
+#include <bits/stdc++.h>
+using namespace std;
+
 #include "math/number_theory.hpp"
 
-#include <iostream>
-
 int main() {
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int t;
-    std::cin >> t;
+    cin >> t;
     while (t--) {
         long long n, m, a, b;
-        std::cin >> n >> m >> a >> b;
-        std::cout << poe::floor_sum(n, m, a, b) << '\n';
+        cin >> n >> m >> a >> b;
+        cout << poe::floor_sum(n, m, a, b) << '\n';
     }
 }
