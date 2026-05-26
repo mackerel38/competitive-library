@@ -1,0 +1,8 @@
+.verify-helper/cache/
+.verify-helper/docs/
+.verify-helper/timestamps.local.toml
+*.out
+*.exe
+*.o
+build/
+
