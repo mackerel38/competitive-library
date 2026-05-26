@@ -33,6 +33,9 @@ jobs:
           python -m pip install "setuptools<81"
           python -m pip install online-judge-verify-helper
 
+      - name: Run verification
+        run: oj-verify run
+
       - name: Generate documentation
         run: oj-verify docs
 
