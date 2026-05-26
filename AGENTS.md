@@ -10,6 +10,7 @@ verify と docs で安全に育て続けられることを重視します。
 
 - C++23 を使います。
 - ヘッダはカテゴリディレクトリ直下に置きます。
+- ヘッダファイルの先頭には必ず `#pragma once` を付けます。
 - include はリポジトリルートからの相対パスを基本にします。例:
   `#include "math/modint.hpp"`.
 - 外部依存は原則として C++ 標準ライブラリだけにします。
@@ -31,7 +32,21 @@ verify と docs で安全に育て続けられることを重視します。
 
 ## ドキュメント
 
-- ライブラリを追加または大きく変更したら、docs 用の説明も追加します。
+- ライブラリを追加または大きく変更したら、`oj-verify docs` 用の Markdown も追加または更新します。
+- 個別ライブラリの説明は `docs/<カテゴリ>/<ヘッダ名>.md` に書きます。例:
+  `math/modint.hpp` の説明は `docs/math/modint.md` に書きます。
+- 個別ライブラリ docs の先頭には YAML Front Matter を置き、`documentation_of` に
+  `.verify-helper` ディレクトリがあるリポジトリルートからの絶対パスを `//` で指定します。例:
+  ```md
+  ---
+  title: Modint
+  documentation_of: //math/modint.hpp
+  ---
+  ```
+- `documentation_of` のパス区切りは `/` を使い、大文字小文字をヘッダの実パスと一致させます。
+- カテゴリの概要や一覧だけを更新したい場合は `<カテゴリ>/README.md` を編集しても構いませんが、
+  ライブラリ本体の説明は `documentation_of` 付きの `docs/<カテゴリ>/<ヘッダ名>.md` に書きます。
+- トップページの内容を変える必要がある場合は `.verify-helper/docs/index.md` を編集します。
 - docs には少なくとも次の内容を書きます。
   - 何ができるか
   - 基本的な使い方
@@ -45,12 +60,36 @@ verify と docs で安全に育て続けられることを重視します。
 
 ## Verify
 
+- 「verify して！」または同等の依頼を受けたら、変更された各ライブラリに対して、
+  その機能を直接検証できる yosupo または AOJ の問題を個別に探して verify ファイルを作成または更新します。
+  ライブラリの検証にならない `A+B Problem` のような汎用的すぎる問題で代用してはいけません。
+  適切な公開問題が見つからない場合は、理由を docs と最終報告に明記し、
+  ランダムテストや愚直解との比較など、ライブラリの性質を検証できる verify を用意します。
+  その後、必ず `scripts/verify_run.sh` を実行して verify、docs 生成、commit、push、
+  push 後の同期確認まで行います。
+- 「`<yosupo のリンク>` を解くためにライブラリを作って」または同等の依頼を受けたら、
+  その問題を解くために必要なライブラリを適切なカテゴリディレクトリに実装し、
+  docs を追加または更新し、verify ファイルを生成して AC コードを書き、
+  `scripts/verify_run.sh` を実行して verify、docs 生成、commit、push、
+  push 後の同期確認まで行います。
+  ユーザーから明示的に止められない限り、途中で提案だけに留めず最後まで実行します。
+- ライブラリを書いたら、yosupo または AOJ の問題を使って
+  `scripts/create_verify.py <問題リンク>` を実行し、verify ファイルを作成します。
+- 生成された verify ファイルを編集して AC できるコードを書き、
+  `scripts/verify_run.sh` を実行して `oj-verify run`、docs 生成、commit、push、
+  push 後の同期確認まで行います。
 - 公開前または push 前に `oj-verify run` を実行します。
 - ライブラリコードを追加したら、対応する検証コードを `verify/` に追加または更新します。
 - verify ファイルは 1 つのライブラリ部品に集中させ、失敗原因を追いやすくします。
-- online judge の問題に紐づける場合は
-  `// competitive-verifier: PROBLEM ...` コメントを使います。
+- online judge の問題に紐づける場合は、verify ファイルの先頭行に
+  `#define PROBLEM "<リンク>"` を書きます。
 - サンプルテストだけで足りない場合は、ランダムテストや愚直解との比較も検討します。
+- verify ファイルでは、競技プログラム用のマクロを使いません。ただし verifier 用の
+  `#define PROBLEM "<リンク>"` は先頭行に置きます。
+- verify ファイルでライブラリを include するときは
+  `#include "math/modint.hpp"` のようにリポジトリルートからの相対パスを書きます。
+- verify ファイルのコードは簡潔にします。input-guard などの意味のない処理や
+  `return 0;` は書きません。
 
 ## API 設計
 
