@@ -1,24 +1,71 @@
 # Repository Guidelines
 
-## Purpose
+## 目的
 
-This repository is a C++23 competitive programming library. Keep it small,
-portable, and easy to copy into contest solutions.
+このリポジトリは C++23 の競技プログラミング用ライブラリです。
+コンテスト中に迷わず使えること、提出コードへ組み込みやすいこと、
+verify と docs で安全に育て続けられることを重視します。
 
-## Implementation Rules
+## 実装ルール
 
-- Use C++23.
-- Place headers directly under their category directories.
-- Prefer include paths relative to the repository root, for example
+- C++23 を使います。
+- ヘッダはカテゴリディレクトリ直下に置きます。
+- include はリポジトリルートからの相対パスを基本にします。例:
   `#include "math/modint.hpp"`.
-- Add or update verification programs under `verify/` when adding library code.
-- Keep public APIs stable. Record breaking changes in `README.md`.
-- Avoid unnecessary dependencies outside the C++ standard library.
+- 外部依存は原則として C++ 標準ライブラリだけにします。
+- 競技プログラミングで使いやすい API を優先します。典型操作、境界処理、
+  変換、検索、取得、復元など、実戦で毎回書きがちなメソッドは必要に応じて
+  ライブラリ側に持たせます。
+- ただし、名前や挙動が曖昧な便利メソッドは避け、何を返すかが読み取れる
+  インターフェースにします。
+- 破壊的な API 変更をした場合は `README.md` または該当 docs に記録します。
 
-## Verification
+## カテゴリ方針
 
-- Run `oj-verify run` before publishing changes.
-- Verification files should be minimal and focused on one library component.
-- Use `// competitive-verifier: PROBLEM ...` comments when binding a verifier to
-  an online judge problem.
+- `structure/`: DSU、Fenwick Tree、Segment Tree などのデータ構造。
+- `math/`: modint、組合せ、数論、行列、畳み込みなど。
+- `geometry/`: 点、直線、多角形、交差判定、距離計算など。
+- `string/`: Z algorithm、suffix array、rolling hash など。
+- `utility/`: chmin/chmax、座標圧縮、乱数、入出力補助など。
+- `graph/`: 最短路、最小全域木、フロー、木 DP、LCA など。
 
+## ドキュメント
+
+- ライブラリを追加または大きく変更したら、docs 用の説明も追加します。
+- docs には少なくとも次の内容を書きます。
+  - 何ができるか
+  - 基本的な使い方
+  - 主要メソッドの意味
+  - 戻り値や副作用
+  - 計算量
+  - 注意点や制約
+- メソッドが多いライブラリでは、代表的な使用例を短いコード片で示します。
+- 計算量は `O(N log N)` のように明示し、前提となる変数も説明します。
+- 未 verify の機能や特殊な前提がある機能は、そのことを docs に書きます。
+
+## Verify
+
+- 公開前または push 前に `oj-verify run` を実行します。
+- ライブラリコードを追加したら、対応する検証コードを `verify/` に追加または更新します。
+- verify ファイルは 1 つのライブラリ部品に集中させ、失敗原因を追いやすくします。
+- online judge の問題に紐づける場合は
+  `// competitive-verifier: PROBLEM ...` コメントを使います。
+- サンプルテストだけで足りない場合は、ランダムテストや愚直解との比較も検討します。
+
+## API 設計
+
+- コンテスト中の可読性を優先し、短すぎて意味が不明な名前は避けます。
+- よくある操作はメソッドとして提供して構いません。例:
+  `same`, `size`, `leader`, `prod`, `max_right`, `min_left`, `restore` など。
+- 境界条件で壊れない実装にします。空列、単一点、非連結グラフ、負辺の有無などを意識します。
+- 0-indexed を基本とします。1-indexed を扱う場合は docs と名前で明示します。
+- 型は必要以上に固定せず、競プロで扱いやすいテンプレート化を検討します。
+- 例外に頼らず、競技環境で扱いやすい戻り値や `assert` を使います。
+
+## コードスタイル
+
+- ヘッダ単体で include できるようにします。
+- `using namespace std;` はライブラリヘッダ内では避けます。
+- グローバルなマクロはできるだけ避けます。
+- コメントは複雑な実装の意図を補うために使い、 obvious な説明は増やしません。
+- 実装より使い方が重要な情報はコメントではなく docs に書きます。
