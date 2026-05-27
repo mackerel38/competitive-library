@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -119,6 +120,8 @@ public:
         return T{};
     }
 
+    T kth(int k) const { return get(k); }
+
     void set(int p, const T& value) {
         assert(0 <= p && p < size());
         node_ptr t = root_;
@@ -134,6 +137,62 @@ public:
                 t = t->right;
             }
         }
+    }
+
+    template <class Compare = std::less<T>>
+    int lower_bound(const T& value, Compare comp = Compare()) const {
+        int res = 0;
+        node_ptr t = root_;
+        while (t) {
+            if (!comp(t->value, value)) {
+                t = t->left;
+            } else {
+                res += size(t->left) + 1;
+                t = t->right;
+            }
+        }
+        return res;
+    }
+
+    template <class Compare = std::less<T>>
+    int upper_bound(const T& value, Compare comp = Compare()) const {
+        int res = 0;
+        node_ptr t = root_;
+        while (t) {
+            if (comp(value, t->value)) {
+                t = t->left;
+            } else {
+                res += size(t->left) + 1;
+                t = t->right;
+            }
+        }
+        return res;
+    }
+
+    template <class Compare = std::less<T>>
+    int count_lt(const T& value, Compare comp = Compare()) const {
+        return lower_bound(value, comp);
+    }
+
+    template <class Compare = std::less<T>>
+    int count_le(const T& value, Compare comp = Compare()) const {
+        return upper_bound(value, comp);
+    }
+
+    template <class Compare = std::less<T>>
+    int count_ge(const T& value, Compare comp = Compare()) const {
+        return size() - count_lt(value, comp);
+    }
+
+    template <class Compare = std::less<T>>
+    int count_gt(const T& value, Compare comp = Compare()) const {
+        return size() - count_le(value, comp);
+    }
+
+    template <class Compare = std::less<T>>
+    bool contains_sorted(const T& value, Compare comp = Compare()) const {
+        int p = lower_bound(value, comp);
+        return p < size() && !comp(get(p), value) && !comp(value, get(p));
     }
 
     std::vector<T> to_vector() const {

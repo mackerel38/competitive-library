@@ -126,6 +126,8 @@ public:
         return res;
     }
 
+    S kth(int k) { return get(k); }
+
     void set(int p, const S& x) {
         assert(0 <= p && p < size());
         auto [l, mr] = split(root_, p);
@@ -147,6 +149,38 @@ public:
     }
 
     S all_prod() const { return prod(root_); }
+
+    template <bool (*g)(S)>
+    int max_right(int l) {
+        return max_right(l, [](S x) { return g(x); });
+    }
+
+    template <class G>
+    int max_right(int l, G g) {
+        assert(0 <= l && l <= size());
+        assert(g(e()));
+        auto [a, b] = split(root_, l);
+        S sm = e();
+        int res = max_right_from(b, sm, g);
+        root_ = merge(a, b);
+        return l + res;
+    }
+
+    template <bool (*g)(S)>
+    int min_left(int r) {
+        return min_left(r, [](S x) { return g(x); });
+    }
+
+    template <class G>
+    int min_left(int r, G g) {
+        assert(0 <= r && r <= size());
+        assert(g(e()));
+        auto [a, b] = split(root_, r);
+        S sm = e();
+        int res = min_left_from(a, sm, g);
+        root_ = merge(a, b);
+        return res;
+    }
 
     void apply(int p, const F& f) {
         assert(0 <= p && p < size());
@@ -237,6 +271,30 @@ private:
         res.push_back(t->value);
         dump(t->right, res);
         update(t);
+    }
+
+    template <class G>
+    static int max_right_from(node_ptr t, S& sm, G& g) {
+        if (!t) return 0;
+        push(t);
+        S with_left = op(sm, prod(t->left));
+        if (!g(with_left)) return max_right_from(t->left, sm, g);
+        S with_node = op(with_left, t->value);
+        if (!g(with_node)) return size(t->left);
+        sm = with_node;
+        return size(t->left) + 1 + max_right_from(t->right, sm, g);
+    }
+
+    template <class G>
+    static int min_left_from(node_ptr t, S& sm, G& g) {
+        if (!t) return 0;
+        push(t);
+        S with_right = op(prod(t->right), sm);
+        if (!g(with_right)) return size(t->left) + 1 + min_left_from(t->right, sm, g);
+        S with_node = op(t->value, with_right);
+        if (!g(with_node)) return size(t->left) + 1;
+        sm = with_node;
+        return min_left_from(t->left, sm, g);
     }
 
     node_ptr root_ = nullptr;

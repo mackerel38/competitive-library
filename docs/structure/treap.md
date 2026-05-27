@@ -27,9 +27,11 @@ S ans = tr.prod(l, r);
 - `split(t, k)`: 木 `t` を `[0, k)` と `[k, n)` に分けます。
 - `insert(p, x)`: 位置 `p` に `x` を挿入します。
 - `erase(p)`: 位置 `p` を削除し、削除した値を返します。
-- `get(p)`, `set(p, x)`: 点取得・点代入。
+- `get(p)`, `kth(k)`, `set(p, x)`: 点取得・k 番目取得・点代入。
 - `prod(l, r)`: `[l, r)` のモノイド積を返します。
 - `all_prod()`: 全体のモノイド積を返します。
+- `max_right(l, g)`: `g(prod(l, r))` が成り立つ最大の `r` を返します。
+- `min_left(r, g)`: `g(prod(l, r))` が成り立つ最小の `l` を返します。
 - `apply(p, f)`, `apply(l, r, f)`: 点または区間に作用を適用します。
 - `reverse(l, r)`: `[l, r)` を反転します。
 - `rotate(l, m, r)`: `[l, m)` と `[m, r)` を入れ替えます。

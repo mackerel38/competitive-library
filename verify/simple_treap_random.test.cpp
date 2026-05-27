@@ -79,6 +79,37 @@ int main() {
         }
         assert(tr.to_vector() == expected);
     }
+    {
+        vector<int> sorted;
+        for (int i = 0; i < 200; ++i) {
+            sorted.push_back(i / 3);
+        }
+        poe::simple_treap<int> tr(sorted);
+        for (int x = -3; x <= 70; ++x) {
+            int lb = lower_bound(sorted.begin(), sorted.end(), x) - sorted.begin();
+            int ub = upper_bound(sorted.begin(), sorted.end(), x) - sorted.begin();
+            assert(tr.lower_bound(x) == lb);
+            assert(tr.upper_bound(x) == ub);
+            assert(tr.count_lt(x) == lb);
+            assert(tr.count_le(x) == ub);
+            assert(tr.count_ge(x) == static_cast<int>(sorted.size()) - lb);
+            assert(tr.count_gt(x) == static_cast<int>(sorted.size()) - ub);
+            assert(tr.contains_sorted(x) == binary_search(sorted.begin(), sorted.end(), x));
+        }
+        for (int i = 0; i < static_cast<int>(sorted.size()); ++i) {
+            assert(tr.kth(i) == sorted[i]);
+        }
+    }
+    {
+        vector<S> a;
+        for (int i = 1; i <= 5; ++i) a.push_back({i, 1});
+        poe::treap<S, op, e, F, mapping, composition, id> tr(a);
+        auto ok6 = [](S x) { return x.sum.val() <= 6; };
+        auto ok9 = [](S x) { return x.sum.val() <= 9; };
+        assert(tr.max_right(0, ok6) == 3);
+        assert(tr.min_left(5, ok9) == 3);
+        assert(tr.kth(2).sum == mint(3));
+    }
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
