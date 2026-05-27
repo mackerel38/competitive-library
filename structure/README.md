@@ -14,3 +14,5 @@
 - `binary_trie.hpp`: Binary Trie
 - `wavelet_matrix.hpp`: Wavelet Matrix
 - `hashmap.hpp`: custom hash map / set aliases
+- `simple_treap.hpp`: simple implicit Treap
+- `treap.hpp`: implicit Treap with lazy propagation and reverse
