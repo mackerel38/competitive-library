@@ -36,6 +36,27 @@ jobs:
       - name: Run verification
         run: oj-verify run
 
+      - name: Refresh newly added verifier statuses
+        run: |
+          oj-verify run \
+            verify/yosupo_deque.test.cpp \
+            verify/yosupo_deque_operate_all_composite.test.cpp \
+            verify/yosupo_double_ended_priority_queue.test.cpp \
+            verify/yosupo_line_add_get_min.test.cpp \
+            verify/yosupo_majority_voting.test.cpp \
+            verify/yosupo_ordered_set.test.cpp \
+            verify/yosupo_persistent_queue.test.cpp \
+            verify/yosupo_point_set_range_frequency.test.cpp \
+            verify/yosupo_predecessor_problem.test.cpp \
+            verify/yosupo_range_add_range_min.test.cpp \
+            verify/yosupo_range_reverse_range_sum.test.cpp \
+            verify/yosupo_rectangle_sum.test.cpp \
+            verify/yosupo_segment_add_get_min.test.cpp \
+            verify/yosupo_static_range_frequency.test.cpp \
+            verify/yosupo_static_range_sum.test.cpp \
+            verify/yosupo_static_range_sum_with_upper_bound.test.cpp \
+            verify/yosupo_unionfind_with_potential.test.cpp
+
       - name: Generate documentation
         run: oj-verify docs
 
