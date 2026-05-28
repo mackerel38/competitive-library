@@ -3,7 +3,10 @@ set -euo pipefail
 
 commit_message="${1:-Verify library updates}"
 
-oj-verify run
+mapfile -t verifiers < <(find verify -maxdepth 1 -name '*.test.cpp' | sort)
+for verifier in "${verifiers[@]}"; do
+    oj-verify run "$verifier"
+done
 oj-verify docs
 
 if ! git diff --quiet || ! git diff --cached --quiet; then

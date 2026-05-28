@@ -28,6 +28,8 @@ auto small = ls.factorize(840);
 - `linear_sieve::factorize(x)`: `x <= n` の素因数分解を返します。
 - `factorize(n)`: Pollard Rho による `long long` の素因数分解を返します。
 - `divisors(n)`: 正の約数を昇順で返します。
+- `primitive_root(mod)`: 素数 mod の原始根を返します。
+- `euler_phi(n)`: Euler の totient 関数を返します。
 
 ## 計算量
 

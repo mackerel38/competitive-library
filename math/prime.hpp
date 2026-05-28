@@ -2,10 +2,12 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <map>
 #include <numeric>
 #include <random>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -95,14 +97,28 @@ bool is_prime(long long n) {
 
 std::vector<int> sieve(int n) {
     if (n < 2) return {};
-    std::vector<bool> is(n + 1, true);
     std::vector<int> primes;
-    is[0] = is[1] = false;
-    for (int i = 2; i <= n; ++i) {
-        if (!is[i]) continue;
-        primes.push_back(i);
-        if (1LL * i * i <= n) {
-            for (long long j = 1LL * i * i; j <= n; j += i) is[j] = false;
+    primes.reserve(n >= 17 ? static_cast<std::size_t>(1.1 * n / std::log(n)) : 6);
+    primes.push_back(2);
+    int odd_count = (n + 1) / 2;
+    std::vector<std::uint64_t> composite((odd_count + 63) >> 6, 0);
+    auto get = [&](int i) -> bool { return (composite[i >> 6] >> (i & 63)) & 1ULL; };
+    auto set = [&](int i) { composite[i >> 6] |= 1ULL << (i & 63); };
+    set(0);
+    for (long long p = 3; p * p <= n; p += 2) {
+        int pi = static_cast<int>(p >> 1);
+        if (get(pi)) continue;
+        for (long long j = p * p; j <= n; j += p << 1) set(static_cast<int>(j >> 1));
+    }
+    for (int w = 0; w < static_cast<int>(composite.size()); ++w) {
+        std::uint64_t bits = ~composite[w];
+        if (w + 1 == static_cast<int>(composite.size()) && (odd_count & 63)) {
+            bits &= (1ULL << (odd_count & 63)) - 1;
+        }
+        while (bits) {
+            int b = __builtin_ctzll(bits);
+            primes.push_back(2 * (w * 64 + b) + 1);
+            bits &= bits - 1;
         }
     }
     return primes;
@@ -188,5 +204,32 @@ std::vector<long long> divisors(long long n) {
     return res;
 }
 
-}  // namespace poe
+long long euler_phi(long long n) {
+    assert(n >= 1);
+    long long res = n;
+    for (auto [p, e] : factorize(n)) {
+        (void)e;
+        res = res / p * (p - 1);
+    }
+    return res;
+}
 
+long long primitive_root(long long mod) {
+    assert(mod >= 2);
+    if (mod == 2) return 1;
+    long long phi = mod - 1;
+    auto fs = factorize(phi);
+    for (long long g = 2;; ++g) {
+        bool ok = true;
+        for (auto [p, e] : fs) {
+            (void)e;
+            if (prime_internal::mod_pow(g, phi / p, mod) == 1) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return g;
+    }
+}
+
+}  // namespace poe
