@@ -50,11 +50,14 @@ jobs:
           CI: ""
           GITHUB_ACTIONS: ""
         run: |
-          if [ ! -s .verify-helper/timestamps.remote.json ]; then
-            oj-verify run verify/*.test.cpp
-          else
+          if [ -s .verify-helper/timestamps.remote.json ]; then
             echo "Using restored verifier timestamps."
+          else
+            echo "No restored verifier timestamps."
           fi
+          for verifier in verify/*.test.cpp; do
+            oj-verify run "$verifier"
+          done
 
       - name: List changed verifier targets
         id: changed-verifiers
