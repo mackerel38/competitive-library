@@ -10,9 +10,9 @@ documentation_of: //structure/area_of_union_of_rectangles.hpp
 ## 使い方
 
 ```cpp
-poe::area_of_union_of_rectangles<long long> solver;
-solver.add_rectangle(l, d, r, u);
-auto area = solver.solve();
+std::vector<std::array<long long, 4>> rects;
+rects.push_back({l, d, r, u});
+auto area = poe::area_of_union_of_rectangles(rects);
 ```
 
 空長方形は無視されます。

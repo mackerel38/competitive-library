@@ -1,5 +1,7 @@
 #pragma once
 
+#include "structure/fenwick_tree.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <vector>
@@ -30,7 +32,7 @@ public:
         std::sort(rects.begin(), rects.end(), [](const rect_query& a, const rect_query& b) {
             return a.x < b.x;
         });
-        fenwick bit(2 * n_);
+        fenwick_tree<int> bit(2 * n_);
         int cur = 0;
         for (auto e : rects) {
             while (cur < e.x) {
@@ -49,24 +51,6 @@ private:
 
     struct rect_query {
         int x, y, id, sign;
-    };
-
-    class fenwick {
-    public:
-        explicit fenwick(int n = 0) : data_(n + 1, 0) {}
-
-        void add(int p, int x) {
-            for (++p; p < static_cast<int>(data_.size()); p += p & -p) data_[p] += x;
-        }
-
-        int sum(int r) const {
-            int res = 0;
-            for (; r > 0; r -= r & -r) res += data_[r];
-            return res;
-        }
-
-    private:
-        std::vector<int> data_;
     };
 
     static void add_rect_query(std::vector<rect_query>& rects, int id, int l, int r, int d, int u) {
