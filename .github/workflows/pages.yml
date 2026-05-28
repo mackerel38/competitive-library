@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: read
   pages: write
   id-token: write
@@ -47,7 +48,7 @@ jobs:
       - name: Seed verifier timestamps
         run: |
           if [ ! -s .verify-helper/timestamps.local.json ]; then
-            oj-verify run
+            oj-verify run verify/*.test.cpp
           else
             echo "Using restored verifier timestamps."
           fi
