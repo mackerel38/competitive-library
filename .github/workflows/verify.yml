@@ -27,5 +27,24 @@ jobs:
       - name: Show compiler
         run: g++ --version
 
-      - name: Run verification
-        run: oj-verify run
+      - name: List changed verifier targets
+        id: changed-verifiers
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python scripts/list_changed_verifiers.py "$BASE_SHA" "$HEAD_SHA" > /tmp/verify-targets.txt
+          cat /tmp/verify-targets.txt
+          if [ -s /tmp/verify-targets.txt ]; then
+            echo "has_targets=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_targets=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run changed verification
+        if: steps.changed-verifiers.outputs.has_targets == 'true'
+        run: xargs oj-verify run < /tmp/verify-targets.txt
+
+      - name: Skip verification
+        if: steps.changed-verifiers.outputs.has_targets == 'false'
+        run: echo "No changed verifier targets."

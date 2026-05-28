@@ -35,11 +35,50 @@ jobs:
           python -m pip install "setuptools<81"
           python -m pip install online-judge-verify-helper
 
-      - name: Run verification
-        run: oj-verify run
+      - name: Restore verifier timestamps
+        id: verify-timestamps
+        uses: actions/cache/restore@v4
+        with:
+          path: .verify-helper/timestamps.local.json
+          key: oj-verify-timestamps-${{ github.sha }}
+          restore-keys: |
+            oj-verify-timestamps-
+
+      - name: Seed verifier timestamps
+        run: |
+          if [ ! -s .verify-helper/timestamps.local.json ]; then
+            oj-verify run
+          else
+            echo "Using restored verifier timestamps."
+          fi
+
+      - name: List changed verifier targets
+        id: changed-verifiers
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python scripts/list_changed_verifiers.py "$BASE_SHA" "$HEAD_SHA" > /tmp/verify-targets.txt
+          cat /tmp/verify-targets.txt
+          if [ -s /tmp/verify-targets.txt ]; then
+            echo "has_targets=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_targets=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run changed verification
+        if: steps.changed-verifiers.outputs.has_targets == 'true'
+        run: xargs oj-verify run < /tmp/verify-targets.txt
 
       - name: Generate documentation
         run: oj-verify docs
+
+      - name: Save verifier timestamps
+        if: steps.verify-timestamps.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .verify-helper/timestamps.local.json
+          key: oj-verify-timestamps-${{ github.sha }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
