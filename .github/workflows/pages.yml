@@ -39,6 +39,9 @@ jobs:
       - name: Refresh verifier statuses
         run: oj-verify run verify/*.test.cpp
 
+      - name: Refresh Union-Find verifier statuses
+        run: oj-verify run verify/yosupo_unionfind.test.cpp verify/yosupo_unionfind_with_potential.test.cpp
+
       - name: Generate documentation
         run: oj-verify docs
 
