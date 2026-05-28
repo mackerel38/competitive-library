@@ -40,14 +40,17 @@ jobs:
         id: verify-timestamps
         uses: actions/cache/restore@v4
         with:
-          path: .verify-helper/timestamps.local.json
+          path: .verify-helper/timestamps.remote.json
           key: oj-verify-timestamps-${{ github.sha }}
           restore-keys: |
             oj-verify-timestamps-
 
       - name: Seed verifier timestamps
+        env:
+          CI: ""
+          GITHUB_ACTIONS: ""
         run: |
-          if [ ! -s .verify-helper/timestamps.local.json ]; then
+          if [ ! -s .verify-helper/timestamps.remote.json ]; then
             oj-verify run verify/*.test.cpp
           else
             echo "Using restored verifier timestamps."
@@ -69,16 +72,22 @@ jobs:
 
       - name: Run changed verification
         if: steps.changed-verifiers.outputs.has_targets == 'true'
+        env:
+          CI: ""
+          GITHUB_ACTIONS: ""
         run: xargs oj-verify run < /tmp/verify-targets.txt
 
       - name: Generate documentation
+        env:
+          CI: ""
+          GITHUB_ACTIONS: ""
         run: oj-verify docs
 
       - name: Save verifier timestamps
         if: steps.verify-timestamps.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: .verify-helper/timestamps.local.json
+          path: .verify-helper/timestamps.remote.json
           key: oj-verify-timestamps-${{ github.sha }}
 
       - name: Setup Pages
